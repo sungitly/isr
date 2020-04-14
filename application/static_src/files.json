@@ -1,0 +1,19 @@
+{
+  "<%=dest%>/js/base.js": "<%=src%>/js/base.js",
+  "<%=dest%>/js/charts.js": "<%=src%>/js/charts.js",
+  "<%=dest%>/js/campaigns/campaigns.js": "<%=src%>/js/campaigns/campaigns.js",
+  "<%=dest%>/js/crm/salesmanager/dashboard.js": "<%=src%>/js/crm/salesmanager/dashboard.js",
+  "<%=dest%>/js/customers/customers.js": "<%=src%>/js/customers/customers.js",
+  "<%=dest%>/js/campaigns/edit.js": "<%=src%>/js/campaigns/edit.js",
+  "<%=dest%>/js/site/errors.js": "<%=src%>/js/site/errors.js",
+  "<%=dest%>/js/orders/orders.js": "<%=src%>/js/orders/orders.js",
+  "<%=dest%>/js/customers/detail.js": "<%=src%>/js/customers/detail.js",
+  "<%=dest%>/js/ops/app_detail.js": "<%=src%>/js/ops/app_detail.js",
+  "<%=dest%>/js/ops/lookupvalue.js": "<%=src%>/js/ops/lookupvalue.js",
+  "<%=dest%>/js/plugins/sort_table.js": "<%=src%>/js/plugins/sort_table.js",
+  "<%=dest%>/js/table.js": "<%=src%>/js/table.js",
+  "<%=dest%>/js/inventories/inventories.js": "<%=src%>/js/inventories/inventories.js",
+  "<%=dest%>/js/radar/tendency.js": "<%=src%>/js/radar/tendency.js",
+  "<%=dest%>/js/radar/structure.js": "<%=src%>/js/radar/structure.js",
+  "<%=dest%>/js/radar/multi.js": "<%=src%>/js/radar/multi.js"
+}

@@ -1,0 +1,155 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        {% if back_endpoint %}
+                            <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                    class="fa fa-arrow-left"></i>&nbsp;</a>
+                        {% endif %}
+                        接待查询 <span class="badge badge-primary">{{ receptions.total }}</span></h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="search-form" action="{{ url_for('receptions.receptions') }}"
+                          method="GET">
+                        <div class="row">
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.start_date(class="input-sm form-control input-s-sm inline", placeholder=form.start_date.description) }}
+                            </div>
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.end_date(class="input-sm form-control input-s-sm inline", placeholder=form.end_date.description) }}
+                            </div>
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.type_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.sales_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.status_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            {{ form.sort_by_field() }}
+                            {{ form.sort_by_order() }}
+                            <div class="col-sm-2 m-b-xs">
+                                <div class="input-sm form-group input-s-sm inline">
+                                    <label>{{ form.incomplete() }} {{ form.incomplete.description }}</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                <a class="btn btn-sm btn-primary" href="{{ url_for('receptions.receptions') }}">重置</a>
+                            </div>
+
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table_receptions">
+                            <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>类型</th>
+                                <th>客户</th>
+                                <th>销售</th>
+                                <th>状态</th>
+                                <th>开始</th>
+                                <th>结束</th>
+                                <th>时长(分钟)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for rx in receptions.items %}
+                                <tr>
+                                    <td>{{ rx.rx_date }}</td>
+                                    <td>{{ rx.rx_type | rx_type_str }}</td>
+                                    <td><a class='text-navy'
+                                           href='{{ url_for('customers.view_details', cid=rx.customer.id) }}'>{{ rx.customer.name or '' }}</a>
+                                    </td>
+                                    <td>{{ rx.sales.username }}</td>
+                                    {% if rx._last_status_changer == 'system' and rx.customer.status == 'draft' %}
+                                        <td><span class="label label-danger">未离店留档</span></td>
+                                    {% else %}
+                                        <td>{{ rx.status | rx_status_str }}</td>
+                                    {% endif %}
+                                    <td>{{ rx.start_str }}</td>
+                                    <td>{{ rx.end_str }}</td>
+                                    {% if rx.status != 'completed' and rx.status != 'cancelled' and rx.rx_date == today %}
+                                        <td>{{ rx.start_str | timedelta_till_now_str }}</td>
+                                    {% else %}
+                                        <td>{{ rx.rx_duration|timedelta_str }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            {% if receptions.pages > 1 %}
+                                {{ pagination(receptions) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{ assets('js/plugins/sort_table.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#start_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+            $('#end_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+        });
+
+        var searchForm = $('#search-form');
+        searchForm.on('change', 'select', function () {
+            $('#search-form').submit();
+        });
+        searchForm.on('change', 'input:checkbox', function () {
+            $('#search-form').submit();
+        });
+
+        var sort_ths = {
+            0: 'rx_date',
+            2: 'customer_id',
+            3: 'sales_id',
+            5: 'created_on',
+            7: 'rx_duration'
+        };
+        var sort_by_field = $('#sort_by_field');
+        var sort_by_order = $('#sort_by_order');
+        var field = sort_by_field.attr('value');
+        var order = sort_by_order.attr('value');
+        var init = {};
+        if (field && order) {
+            order = (+order | 0) % 3;
+            init[field] = order;
+        }
+        $('#table_receptions').sort_table({
+            init: init, ids: sort_ths, callback: function (id, order, field) {
+                sort_by_field.attr('value', field);
+                sort_by_order.attr('value', order);
+                searchForm.submit();
+            }
+        });
+
+    </script>
+{% endblock %}

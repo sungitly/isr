@@ -1,0 +1,95 @@
+{
+  "jquery": {
+    "exports": "$",
+    "path": "<%=src%>/vender/jquery-2.1.1.js"
+  },
+  "bootstrap": {
+    "path": "<%=src%>/vender/bootstrap.js",
+    "exports": null,
+    "depends": {
+      "jquery": "jquery"
+    }
+  },
+  "jquery.metisMenu": {
+    "path": "<%=src%>/vender/plugins/metisMenu/jquery.metisMenu.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "jquery.slimscroll": {
+    "path": "<%=src%>/vender/plugins/slimscroll/jquery.slimscroll.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "inspinia": {
+    "path": "<%=src%>/vender/inspinia.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$",
+      "jquery.metisMenu": null
+    }
+  },
+  "pace": "<%=src%>/vender/plugins/pace/pace.min.js",
+  "jquery.ui": {
+    "path": "<%=src%>/vender/plugins/jquery-ui/jquery-ui.js",
+    "exports": "null",
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "jquery.chosen": {
+    "path": "<%=src%>/vender/plugins/chosen/chosen.jquery.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "highcharts": "<%=src%>/vender/highcharts/4.1.7/highcharts.js",
+  "highcharts.data": {
+    "path": "<%=src%>/vender/highcharts/4.1.7/modules/data.src.js",
+    "exports": null
+  },
+  "bootstrap.datepicker": {
+    "path": "<%=src%>/vender/plugins/datepicker/bootstrap-datepicker.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "jquery.cookie": {
+    "path": "<%=src%>/vender/plugins/carhartl-jquery-cookie/jquery.cookie.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "moment": {
+    "exports": "moment",
+    "path": "<%=src%>/vender/plugins/moment/2.9.0/moment.js"
+  },
+  "filter.date": "<%=src%>/js/common/filter_date.js",
+  "highcharts.helper": "<%=src%>/js/common/highcharts-helper.js",
+  "highcharts.options": "<%=src%>/js/common/highcharts-options.js",
+  "jquery.zeroclipboard": {
+    "path": "<%=src%>/vender/plugins/zeroclipboard/jquery.zeroclipboard.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "jsGrid": {
+    "path": "<%=src%>/vender/jsgrid.js",
+    "exports": null,
+    "depends": {
+      "jquery": "$"
+    }
+  },
+  "spinner": {
+    "exports": "spinner",
+    "path": "<%=src%>/vender/spin.js"
+  }
+}
+

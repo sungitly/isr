@@ -1,0 +1,72 @@
+{% extends 'mmgmt/layout.html' %}
+
+{% block content %}
+    <div id="container" class="rate">
+
+        <div class="item-wrapper">
+            <a href="{{ url_for('stats.target_completion_rate', back_endpoint='mmgmt.stats_chart') }}" class="item">
+                <i class="icon iconfont red">&#xe615;</i>
+                <span>目标完成度</span>
+            </a>
+            <a href="{{ url_for('stats.conversion_rate', back_endpoint='mmgmt.stats_chart') }}" class="item">
+                <i class="icon iconfont blue">&#xe616;</i>
+                <span>转化率</span>
+            </a>
+            <a href="{{ url_for('stats.filing_rate', back_endpoint='mmgmt.stats_chart') }}" class="item">
+                <i class="icon iconfont red">&#xe60a;</i>
+                <span>留档率</span>
+            </a>
+            <a href="{{ url_for('stats.test_drive_rate', back_endpoint='mmgmt.stats_chart') }}" class="item">
+                <i class="icon iconfont blue">&#xe60d;</i>
+                <span>试驾率</span>
+            </a>
+            <a href="{{ url_for('stats.intent_car_distribution', back_endpoint='mmgmt.stats_chart') }}" class="item">
+                <i class="icon iconfont red">&#xe613;</i>
+                <span>意向车型分布</span>
+            </a>
+        </div>
+
+        <div class="title">销售顾问个人</div>
+        <div class="item-wrapper">
+            <a href="{{ url_for('stats.sales_consultant', _anchor='tab-1', back_endpoint='mmgmt.stats_chart') }}"
+               class="item">
+                <i class="icon iconfont orange">&#xe615;</i>
+                <span>当月成交</span>
+            </a>
+            <a href="{{ url_for('stats.sales_consultant', _anchor='tab-2',back_endpoint='mmgmt.stats_chart') }}"
+               class="item">
+                <i class="icon iconfont orange">&#xe616;</i>
+                <span>个人转化率</span>
+            </a>
+            <a href="{{ url_for('stats.sales_consultant', _anchor='tab-3',back_endpoint='mmgmt.stats_chart') }}"
+               class="item">
+                <i class="icon iconfont orange">&#xe60a;</i>
+                <span>个人留档率</span>
+            </a>
+            <a href="{{ url_for('stats.sales_consultant', _anchor='tab-6',back_endpoint='mmgmt.stats_chart') }}"
+               class="item">
+                <i class="icon iconfont orange">&#xe60d;</i>
+                <span>试驾率</span>
+            </a>
+        </div>
+
+        <div class="title">客户研究类</div>
+        <div class="item-wrapper">
+            <a href="{{ url_for('stats.unordered_customers', back_endpoint='mmgmt.stats_chart') }}" class="item">
+                <i class="icon iconfont blue">&#xe610;</i>
+                <span>未成交客户走势</span>
+            </a>
+            <a href="{{ url_for('stats.ordered_customers', _anchor='tab-3', back_endpoint='mmgmt.stats_chart') }}"
+               class="item">
+                <i class="icon iconfont blue">&#xe60e;</i>
+                <span>成交客户平均跟进次数</span>
+            </a>
+            <a href="{{ url_for('stats.ordered_customers', _anchor='tab-2', back_endpoint='mmgmt.stats_chart') }}"
+               class="item">
+                <i class="icon iconfont red">&#xe60e;</i>
+                <span>成交客户平均到店次数</span>
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form role="form" id="search-form" action="{{ url_for('ops.lookupvalues') }}"
+                          method="GET">
+                        <div class="row m-t-md">
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.store_filter(class="input-sm form-control input-s-sm chosen-select", id="select-store") }}
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.lookup_filter(class="input-sm form-control input-s-sm",id="select-store-lookup-name") }}
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                <button type="submit" class="btn btn-sm btn-primary" id="search-description">搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{{ storename }}</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    {% if store_id and lookup_id %}
+                        <div class="row m-t-md">
+                            <div class="col-sm-2">
+                                <h5><span class="m-r-lg">{{ descriptions["description"] }}</span>
+                                    <a id="link-to-description"
+                                       href="{{ url_for('ops.lookupvalues_add', lookup_id=lookup_id) }}">
+                                        <button type="button" class="btn btn-primary btn-xs" id="add-description-btn">
+                                            新增
+                                        </button>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                </h5>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if store_id and not lookup_id %}
+                        <div class="row m-t-md">
+                            <div class="col-sm-4">
+                                <a id="link-to-description"
+                                   href="{{ url_for('ops.lookupvalues_upload', store_id=store_id) }}">
+                                    <button type="button" class="btn btn-primary btn-sm" id="create-store-lookupvalues">
+                                        导入4S店系统部署信息
+                                    </button>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="store-data">
+                            <thead>
+                            <tr>
+                                <th>{{ descriptions["id"] }}</th>
+                                <th>{{ descriptions["code"] }}</th>
+                                <th>{{ descriptions["value"] }}</th>
+                                <th>{{ descriptions["orders"] }}</th>
+                                <th>{{ descriptions["section"] }}</th>
+                                <th>{{ descriptions["version"] }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for per_lookupvalue in lookupvalues %}
+                                <tr>
+                                    <td>{{ per_lookupvalue.id }}</td>
+                                    <td>{{ per_lookupvalue.code }}</td>
+                                    <td>{{ per_lookupvalue.value }}</td>
+                                    <td>{{ per_lookupvalue.order }}</td>
+                                    <td>{{ per_lookupvalue.section }}</td>
+                                    <td>{{ per_lookupvalue.version }}</td>
+                                    <td>
+                                        <a id="deleted_btn" class="btn btn-sm btn-danger"
+                                           href="{{ url_for("ops.lookupvalues_delete", lookupvalue_id=per_lookupvalue.id) }}">删除
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script>
+        var lookup_value_url = "{{ url_for("ops.lookupvalues") }}";
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var select_store = $('#select-store');
+            var select_store_lookup_name = $('#select-store-lookup-name');
+            select_store.on('change', function () {
+                var store_id = $(this).val();
+                var settings = {
+                    data: {"store_id": store_id}
+                };
+                $.ajax('/api/lookup/descriptions', settings
+                ).done(function (data) {
+                    select_store_lookup_name.empty();
+                    for (var key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            select_store_lookup_name.append('<option value=' + key + '>' + data[key] + '</option>');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

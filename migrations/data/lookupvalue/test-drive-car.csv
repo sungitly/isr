@@ -1,0 +1,12 @@
+code,value,lookup_id,parent_id,order,image_url,section,version
+Q50,Q50,5,-1,20,/drive/q50.png,,1
+Q50L,Q50L,5,-1,30,/drive/q50l.png,,1
+Q60,Q60,5,-1,40,/drive/q60.png,,1
+Q60S,Q60S,5,-1,50,/drive/q60s.png,,1
+Q70L,Q70L,5,-1,60,/drive/q70l.png,,1
+ESQ,ESQ,5,-1,70,/drive/esq.png,,1
+QX50,QX50,5,-1,80,/drive/qx50.png,,1
+QX60,QX60,5,-1,90,/drive/qx60.png,,1
+QX70,QX70,5,-1,100,/drive/qx70.png,,1
+QX80,QX80,5,-1,110,/drive/qx80.png,,1
+none,无,5,-1,10,/drive/none.png,,1

@@ -1,0 +1,33 @@
+{% macro form_error() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endmacro %}
+
+{% macro field_error(field) %}
+    <span class="text-danger form-error {% if field.errors[0] %}show{% endif %}">
+      {% if field.errors[0] %}
+          {{ field.errors[0] }}
+      {% endif %}
+   </span>
+{% endmacro %}
+
+{% macro vertical_field(field, label=True) %}
+    <div class="form-group">
+        {% if label %}
+            {{ field.label() }}
+        {% endif %}
+
+        {{ field(class="form-control", placeholder=field.description, **kwargs) }}
+        {{ field_error(field) }}
+    </div>
+{% endmacro %}
+
+
+{% macro form_submit(btn_text, full_width=False) %}
+    <button type="submit" class="btn btn-primary {% if full_width %}full-width{% endif %}">{{ btn_text }}</button>
+{% endmacro %}

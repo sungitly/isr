@@ -1,0 +1,129 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}预约查询 <span class="badge badge-primary">{{ appts.total }}</span></h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="search-form" action="{{ url_for('appointments.appts') }}"
+                          method="GET">
+                        <div class="row">
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.start_date(class="input-sm form-control input-s-sm inline", placeholder=form.start_date.description) }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.end_date(class="input-sm form-control input-s-sm inline", placeholder=form.end_date.description) }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.type_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.status_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.sales_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            {{form.sort_by_field()}}
+                            {{form.sort_by_order()}}
+                            <div class="col-sm-2 m-b-xs">
+                                <a class="btn btn-sm btn-primary" href="{{ url_for('appointments.appts') }}">重置</a>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table_appts">
+                            <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>时间</th>
+                                <th>类型</th>
+                                <th>客户</th>
+                                <th>销售</th>
+                                <th>状态</th>
+                                <th>备注</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for appt in appts.items %}
+                                <tr>
+                                    <td>{{ appt.appt_date }}</td>
+                                    <td>{{ appt.appt_datetime | time_str }}</td>
+                                    <td>{{ appt.type | appt_type_str }}</td>
+                                    <td><a class='text-navy'
+                                           href='{{ url_for('customers.view_details', cid=appt.customer.id) }}'>{{ appt.customer.name or '' }}</a>
+                                    </td>
+                                    <td>{{ appt.sales.username }}</td>
+                                    <td>{{ appt.status | appt_status_str(appt.type) }}</td>
+                                    <td>{{ appt.remark }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            {% if appts.pages > 1 %}
+                                {{ pagination(appts) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{assets('js/plugins/sort_table.js')}}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#start_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+            $('#end_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+        });
+
+        var searchForm = $('#search-form');
+        searchForm.on('change', 'select', function () {
+            searchForm.submit();
+        });
+
+        var sort_ths = {
+            0: 'customer_id',
+            1: '_appt_datetime',
+            2: 'type',
+            3: 'customer_id',
+            4: 'sales_id'
+        };
+        var sort_by_field = $('#sort_by_field');
+        var sort_by_order = $('#sort_by_order');
+        var field = sort_by_field.attr('value');
+        var order = sort_by_order.attr('value');
+        var init = {};
+        if (field && order){
+            order = (+order | 0) % 3;
+            init[field]= order;
+        }
+        $('#table_appts').sort_table({init:init, ids: sort_ths, callback:function(id, order, field){
+            sort_by_field.attr('value', field);
+            sort_by_order.attr('value', order);
+            searchForm.submit();
+        }});
+
+    </script>
+{% endblock %}

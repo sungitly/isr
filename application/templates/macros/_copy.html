@@ -1,0 +1,6 @@
+{% macro copy(value) %}
+    {% if value %}
+        &nbsp;<button class="btn btn-xs btn-white btn-bitbucket copy zclip hidden-xs hidden-sm"
+                data-zclip-text="{{ value }}"><i class="fa fa-clipboard"></i></button>
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,275 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_copy.html' import copy %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="wrapper wrapper-content animated fadeInUp">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <div class="row">
+                            <div class="col-lg-1">
+                                <a href="{{ back_url }}"
+                                   class="btn btn-outline btn-primary btn-sm"><i
+                                        class="fa fa-arrow-left"></i></a>
+                            </div>
+                            <div class="col-lg-11">
+                                <div class="m-b-md">
+                                    <h2>{{ customer.name }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <dl class="dl-horizontal">
+                                    <dt>客户姓名:</dt>
+                                    <dd>{{ customer.name }}{{ copy(customer.name) }}</dd>
+                                    <dt>销售顾问:</dt>
+                                    <dd>{{ customer.sales.username }}{{ copy(customer.sales.username) }}</dd>
+                                    <dt>最后到访时间:</dt>
+                                    <dd>{{ customer.last_reception_date|date_str }}</dd>
+                                </dl>
+                            </div>
+                            <div class="col-lg-7" id="cluster_info">
+                                <dl class="dl-horizontal">
+                                    <dt>状态:</dt>
+                                    <dd>
+                                        <span class="label {{ customer.status|customer_status_css }}">{{ customer.status|customer_status_str }}</span>
+                                    </dd>
+                                    <dt>性别:</dt>
+                                    <dd>{{ customer.gender|gender_str }}{{ copy(customer.gender|gender_str) }}</dd>
+                                    <dt>下次预约时间:</dt>
+                                    <dd>{{ customer.next_appointment_date|date_str }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <dl class="dl-horizontal">
+                                    <dt>意向车型:</dt>
+                                    <dd>
+                                        {{ customer.intent_car_ids | multi_lookup_str(current_user.store_id, 'intent-car') }}{{ copy(customer.intent_car_ids | multi_lookup_str(current_user.store_id, 'intent-car')) }}</dd>
+                                    <dt>意向颜色:</dt>
+                                    <dd>
+                                        {{ customer.intent_car_colors or '' }}{{ copy(customer.intent_car_colors or '') }}</dd>
+                                    <dt>购买周期:</dt>
+                                    <dd>
+                                        {{ customer.intent_level|lookup_str(current_user.store_id, 'intent-level') }}{{ copy(customer.intent_level|lookup_str(current_user.store_id, 'intent-level')) }}</dd>
+                                </dl>
+                            </div>
+                            <div class="col-lg-7">
+                                <dl class="dl-horizontal">
+                                    <dt>试驾车型:</dt>
+                                    <dd>
+                                        {{ customer.test_drive_car_ids | multi_lookup_str(current_user.store_id, 'test-drive-car') }}{{ copy(customer.test_drive_car_ids | multi_lookup_str(current_user.store_id, 'test-drive-car')) }}</dd>
+                                    <dt>现有车型:</dt>
+                                    <dd>{{ customer.owned_car_ids or '' }}{{ copy(customer.owned_car_ids or '') }}</dd>
+                                    <dt>竞品信息:</dt>
+                                    <dd>
+                                        {{ customer.competing_car_ids or '' }}{{ copy(customer.competing_car_ids or '') }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <dl class="dl-horizontal">
+                                    {% if customer.sales_id == current_user.id %}
+                                        <dt>联系电话:</dt>
+                                        <dd>{{ customer.mobile }}{{ copy(customer.mobile) }}</dd>
+                                    {% else %}
+                                        <dt>联系电话:</dt>
+                                        <dd>{{ customer.mobile_display() }}</dd>
+                                    {% endif %}
+                                    <dt>备注:</dt>
+                                    <dd>{{ customer.remark or '' }}{{ copy(customer.remark or '') }}</dd>
+                                    <dt>家庭地址:</dt>
+                                    <dd>{{ customer.address_line or '' }}{{ copy(customer.address_line or '') }}</dd>
+                                    {% if customer.status == 'defeated' %}
+                                        <dt class="text-danger">休眠原因:</dt>
+                                        <dd>
+                                            {{ customer.defeated_reason or '' }}{{ copy(customer.defeated_reason or '') }}</dd>
+                                    {% endif %}
+                                </dl>
+                            </div>
+                        </div>
+                        {% if current_user.has_role_in_current_store('manager') %}
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <form role="form" id="reassign-form" class="form-inline"
+                                          action="{{ url_for('customers.view_details', cid=customer.id) }}"
+                                          method="POST">
+                                        {{ form.csrf_token() }}
+                                        <dl class="dl-horizontal">
+                                            <dt>重新分配</dt>
+                                            <dd>
+                                                {{ form.saleses_list(class="input-sm form-control input-s-sm inline") }}
+                                                <input type="hidden" name="currentSalesId" id="currentSalesId"
+                                                       value="{{ customer.sales_id }}">
+                                                <input type="hidden" name="customerName" id="customerName"
+                                                       value="{{ customer.name }}"/>
+                                                <input type=hidden value="{{ back_url or '' }}" name="back_url">
+                                                <button type="button" id="reassign-btn" class="btn btn-sm btn-primary">
+                                                    重新分配
+                                                </button>
+                                            </dd>
+                                        </dl>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="row m-t-sm">
+                            <div class="col-lg-12">
+                                <div class="panel blank-panel">
+                                    <div class="panel-heading">
+                                        <div class="panel-options">
+                                            <ul class="nav nav-tabs">
+                                                <li class="active"><a href="#orders" data-toggle="tab">订单列表</a></li>
+                                                <li class=""><a href="#appointments" data-toggle="tab">预约列表</a></li>
+                                                <li class=""><a href="#calllogs" data-toggle="tab">通话记录</a></li>
+                                                <li class=""><a href="#receptions" data-toggle="tab">到店记录</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="orders">
+                                                <table class="footable table table-stripped toggle-arrow-tiny"
+                                                       data-page-size="8">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>订单号</th>
+                                                        <th>销售顾问</th>
+                                                        <th>订购车型</th>
+                                                        <th>订购时间</th>
+                                                        <th>交车时间</th>
+                                                        <th>状态</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for order in orders %}
+                                                        <tr>
+                                                            <td>{{ order.order_no }}</td>
+                                                            <td>{{ order.sales.username }}</td>
+                                                            <td>{{ order.ordered_car_name }}</td>
+                                                            <td>{{ order.created_on|date_str }}</td>
+                                                            <td>{{ order.delivered_date|date_str }}</td>
+                                                            <td>{{ order.get_status_for_display() }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane" id="appointments">
+                                                <table class="footable table table-stripped toggle-arrow-tiny"
+                                                       data-page-size="8">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>预约时间</th>
+                                                        <th>销售</th>
+                                                        <th>预约类型</th>
+                                                        <th>备注</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for appt in appts %}
+                                                        <tr>
+                                                            <td>{{ appt.appt_datetime|datetime_str }}</td>
+                                                            <td>{{ appt.sales.username }}</td>
+                                                            <td>{{ appt.get_type_for_display() }}</td>
+                                                            <td>{{ appt.remark or '' }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane" id="calllogs">
+                                                <table class="footable table table-stripped toggle-arrow-tiny"
+                                                       data-page-size="8">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>拨打时间</th>
+                                                        <th>销售</th>
+                                                        <th>通话时长</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for calllog in calllogs %}
+                                                        <tr>
+                                                            <td>{{ calllog.call_start|datetime_str }}</td>
+                                                            <td>{{ calllog.sales.username }}</td>
+                                                            <td>{{ calllog.duration | timedelta_str_in_min }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane" id="receptions">
+                                                <table class="footable table table-stripped toggle-arrow-tiny"
+                                                       data-page-size="8">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>到店日期</th>
+                                                        <th>接待销售</th>
+                                                        <th>开始</th>
+                                                        <th>结束</th>
+                                                        <th>接待时长(分钟)</th>
+
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for rx in receptions %}
+                                                        <tr>
+                                                            <td>{{ rx.created_on|date_str }}</td>
+                                                            <td>{{ rx.sales.username }}</td>
+                                                            <td>{{ rx.created_on|time_str }}</td>
+                                                            <td>{{ rx.calc_leave_datetime_str() }}</td>
+                                                            <td>{{ rx.rx_duration|timedelta_str }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+        </div>
+        <div class="modal fade" id="message">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="message-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="message-body"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary btn-confirm">确定</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript" src="{{ assets('js/customers/detail.js') }}"></script>
+{% endblock %}

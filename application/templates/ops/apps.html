@@ -1,0 +1,28 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            {% for app in apps %}
+                <div class="col-lg-4">
+                    <div class="contact-box">
+                        <a href="{{ url_for('ops.app_detail', app_name=app.name) }}">
+                            <div class="col-sm-12">
+                                <h3 class="m-b-md"><strong>{{ app.desc or '' }}</strong></h3>
+
+                                <p><i class="fa fa-paperclip m-r-sm"></i>{{ app.type }}</p>
+
+                                <p><i class="fa fa-paperclip m-r-sm"></i>{{ app.version }} ({{ app.version_num }})</p>
+                            </div>
+                            <div class="clearfix"></div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+
+{% endblock %}

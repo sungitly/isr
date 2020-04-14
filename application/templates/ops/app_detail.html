@@ -1,0 +1,95 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="row animated fadeInRight">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <div class="row m-b-lg">
+                            <div class="col-lg-1">
+                                <a href="{{ back_url }}"
+                                   class="btn btn-outline btn-primary btn-sm"><i
+                                        class="fa fa-arrow-left"></i></a>
+                            </div>
+                            <div class="col-lg-11">
+                                <h2><span class="m-r-md">{{ app.desc or  '' }} </span>
+                                    <button type="button" class="btn btn-primary" id="upgrade-btn">Upgrade
+                                    </button>
+                                </h2>
+                            </div>
+                        </div>
+                        <div>
+                            <ul class="list-group clear-list">
+                                <li class="list-group-item fist-item">
+                                    类型: <span class="m-l-md">{{ app.type }}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    版本: <span class="m-l-md">{{ app.version }} ({{ app.version_num }})</span>
+                                </li>
+                                <li class="list-group-item">
+                                </li>
+                            </ul>
+                        </div>
+                        {% for note in notes %}
+                            <div class="timeline-item">
+                                <div class="row">
+                                    <div class="col-xs-3 date">
+                                        <i class="fa fa-file-text"></i>
+                                        {{ note.created_on | datetime_str }}
+                                        <br>
+                                        <small class="text-navy">{{ note.version }} ({{ note.version_num }})</small>
+                                    </div>
+                                    <div class="col-xs-7 content">
+                                        <pre>{{ note.note }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="upgrade-m">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form role="form" id="reassign-form" action="{{ url_for('ops.app_detail', app_name=app.name) }}"
+                      method="POST">
+                    {{ form.csrf_token() }}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="message-title">更新升级信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="message-body">
+                            <div class="form-group"><label>版本</label> {{ form.version(class="form-control") }}</div>
+                            <div class="form-group"><label>版本号</label> {{ form.version_num(class="form-control") }}
+                            </div>
+                            <div class="form-group"><label>更新说明</label> {{ form.note(class="form-control", rows=10) }}</div>
+                            <input type=hidden value="{{ back_url or '' }}" name="back_url">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary btn-confirm">确定</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+
+    <script type="text/javascript" src="{{ assets('js/ops/app_detail.js') }}"></script>
+{% endblock %}

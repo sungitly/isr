@@ -1,0 +1,43 @@
+{% extends 'mmgmt/layout.html' %}
+
+{% block content %}
+<div id="container" class="menu">
+
+    <a href="{{ url_for('user.morning_call', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont orange">&#xe608;</i>
+        <span>晨会资料</span>
+    </a>
+    <a href="{{ url_for('user.evening_call', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont blue">&#xe608;</i>
+        <span>夕会资料</span>
+    </a>
+    <a href="{{ url_for('receptions.receptions', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont red">&#xe609;</i>
+        <span>接待查询</span>
+    </a>
+    <a href="{{ url_for('appointments.appts', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont orange">&#xe607;</i>
+        <span>回访查询</span>
+    </a>
+    <a href="{{ url_for('calllogs.calllogs', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont blue">&#xe618;</i>
+        <span>通话记录</span>
+    </a>
+    <a href="{{ url_for('customers.customers', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont green">&#xe611;</i>
+        <span>客户管理</span>
+    </a>
+    <a href="{{ url_for('orders.orders', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont blue">&#xe60b;</i>
+        <span>订单管理</span>
+    </a>
+    <a href="{{ url_for('campaigns.campaigns', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont red">&#xe612;</i>
+        <span>活动管理</span>
+    </a>
+    <a href="{{ url_for('leads.leads', back_endpoint='mmgmt.stats_detail') }}" class="menu-item">
+        <i class="icon iconfont green">&#xe614;</i>
+        <span>未接待客流</span>
+    </a>
+</div>
+{% endblock %}

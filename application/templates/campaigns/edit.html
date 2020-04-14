@@ -1,0 +1,92 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_form.html' import field_error %}
+{% block content %}
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <a href="{{ back_url }}" class="btn btn-outline btn-primary btn-sm"><i
+                                        class="fa fa-arrow-left"></i></a>
+                </div>
+                <div class="ibox-content">
+                    {% if campaign %}
+                    <form method="post" id="campaign-form" class="form-horizontal" action="{{ url_for('campaigns.edit_campaign', campaign_id=campaign.id) }}" >
+                    {% else %}
+                    <form method="post" id="campaign-form" class="form-horizontal" action="{{ url_for('campaigns.create_campaign') }}" >
+                    {% endif %}
+                        {{ form.csrf_token() }}
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <div class="form-group">
+
+                            <label class="col-sm-2 control-label">{{ form.title.label.text }}</label>
+                            <div class="col-sm-10">{{ form.title(class="form-control", placeholder=form.title.label.text) }}{{ field_error(form.title) }}</div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">{{ form.content.label.text }}</label>
+
+                            <div class="col-sm-10">
+                               {{ form.content(class="form-control", cols="35", rows="20", placeholder=form.content.label.text) }}{{ field_error(form.content) }}
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">相关车型</label>
+
+                            <div class="col-sm-10">
+                                {{ form.related_cars(class="list-inline") }}
+                                {{ field_error(form.related_cars) }}
+{#                                {% for checkbox in form.related_cars %}#}
+{#                                    <label>{{ checkbox }}<i></i>checkbox.label.text</label>&nbsp;&nbsp;#}
+{#                                {% endfor %}#}
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group" id="campaign-time">
+                            <label class="col-sm-2 control-label">活动时间</label>
+
+                            <div class="col-sm-6 input-daterange input-group" id="datepicker"
+                                 style="padding-left:15px; padding-right: 15px;">
+                                {{ form.start(class='input-sm form-control') }}{{ field_error(form.start) }}
+{#                                <input type="text" class="input-sm form-control" name="start" value="05/14/2014"/>#}
+                                <span class="input-group-addon">to</span>
+                                {{ form.end(class='input-sm form-control') }}{{ field_error(form.end) }}
+{#                                <input type="text" class="input-sm form-control" name="end" value="05/22/2014"/>#}
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group" id="notify-time">
+                            <label class="col-sm-2 control-label">推送时间</label>
+
+                            <div class="col-sm-2 input-group date" style="padding-left: 15px;padding-right: 15px">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                {{ form.notify_date(class='form-control') }}{{ field_error(form.notify_date) }}
+{#                                <input type="text" class="form-control" value="03/04/2014">#}
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type=hidden value="{{ back_url or '' }}" name="back_url">
+                                <button class="btn btn-white btn-cancel" type="submit">取消</button>
+                                &nbsp;&nbsp;
+                                <button class="btn btn-primary" type="submit">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{ assets('js/campaigns/edit.js') }}"></script>
+{% endblock %}

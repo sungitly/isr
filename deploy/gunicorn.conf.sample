@@ -1,0 +1,6 @@
+workers=2
+bind='127.0.0.1:5555'
+proc_name='isr'
+pidfile='/tmp/isr.pid'
+accesslog='/var/www/ucdip/isr/logs/g_access.log'
+errorlog='/var/www/ucdip/isr/logs/g_error.log'

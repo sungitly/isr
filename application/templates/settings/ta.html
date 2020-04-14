@@ -1,0 +1,131 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox">
+                <div class="ibox-title">{% if back_endpoint %}
+                    <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                            class="fa fa-arrow-left"></i>&nbsp;</a>
+                {% endif %}月TA设定
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        <form class="form-inline" id="monthly-ta" method="POST">
+                            {{ monthly_form.csrf_token() }}
+                            <div class="form-group">
+                                <div class="input-group date monthly">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="month" name="date" class="form-control " placeholder="TA月份">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ monthly_form.ta(class='form-control', placeholder='TA', type='number') }}
+                            </div>
+                            {{ monthly_form.date() }}
+                            {{ monthly_form.type() }}
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </form>
+                    </div>
+                    <hr/>
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>月份</th>
+                                <th>TA</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for m_setting in monthly_ta_settings %}
+                                <tr>
+                                    <td>{{ m_setting.year }}年{{ m_setting.month }}月</td>
+                                    <td>{{ m_setting.value }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ibox">
+                <div class="ibox-title">周TA设定</div>
+                <div class="ibox-content">
+                    <div>
+                        <form class="form-inline" id="weekly-ta" method="POST">
+                            {{ weekly_form.csrf_token() }}
+                            <div class="form-group">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="week" name="date" class="form-control " placeholder="TA周">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ weekly_form.ta(class='form-control', placeholder='TA', type='number') }}
+                            </div>
+                            {{ weekly_form.date() }}
+                            {{ weekly_form.type() }}
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </form>
+                    </div>
+                    <hr/>
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>周</th>
+                                <th>TA</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for m_setting in weekly_ta_settings %}
+                                <tr>
+                                    <td>{{ m_setting.week|weekly_str(m_setting.year) }} 第{{ m_setting.week }}周</td>
+                                    <td>{{ m_setting.value }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#monthly-ta .input-group.date').datepicker({
+                todayBtn: "linked",
+                minViewMode: 1,
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: 'yyyy/mm',
+                lang: 'zh-CN'
+            }).on('changeDate', function (event) {
+
+                $('#monthly-ta #monthly-date').val(event.date.getFullYear() + '/' + (event.date.getMonth() + 1) + '/' + event.date.getDate())
+            });
+
+            $('#weekly-ta .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: 'w',
+                selectWeek: true,
+                lang: 'zh-CN'
+            }).on('changeDate', function (event) {
+                $('#weekly-ta #year').html(event.date.getFullYear());
+                $('#weekly-ta #weekly-date').val(event.date.getFullYear() + '/' + (event.date.getMonth() + 1) + '/' + event.date.getDate())
+            });
+        });
+    </script>
+{% endblock %}

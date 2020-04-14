@@ -1,0 +1,367 @@
+{% extends 'layout/base.html' %}
+
+{% from 'macros/_filter.html' import filter_date %}
+
+{% block content %}
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>{% if back_endpoint %}
+                    <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                            class="fa fa-arrow-left"></i>&nbsp;</a>
+                {% endif %}销售顾问</h5>
+
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1">本月成交</a></li>
+                        <li><a data-toggle="tab" href="#tab-2">转化率</a></li>
+                        <li><a data-toggle="tab" href="#tab-3">留档率</a></li>
+                        <li><a data-toggle="tab" href="#tab-4">邀约完成率</a></li>
+                        {#                        <li><a data-toggle="tab" href="#tab-5">跟进率</a></li>#}
+                        <li><a data-toggle="tab" href="#tab-6">试驾率</a></li>
+                        <li><a data-toggle="tab" href="#tab-7">接待时长率</a></li>
+                        {#                        <li><a data-toggle="tab" href="#tab-8">信息录入率</a></li>#}
+                        {#                        <li><a data-toggle="tab" href="#tab-9">客户级别</a></li>#}
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div id="sc-orders" class="panel-body">
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div id="sc-cr" class="panel-body">
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <div id="sc-fr" class="panel-body">
+                            </div>
+                        </div>
+                        <div id="tab-4" class="tab-pane">
+                            <div id="sc-acr" class="panel-body">
+                            </div>
+                        </div>
+                        {#                        <div id="tab-5" class="tab-pane">#}
+                        {#                            <div id="sc-fur" class="panel-body">#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                        <div id="tab-6" class="tab-pane">
+                            <div id="sc-tdr" class="panel-body">
+                            </div>
+                        </div>
+                        <div id="tab-7" class="tab-pane">
+                            <div id="sc-rdr" class="panel-body">
+                            </div>
+                        </div>
+                        {#                        <div id="tab-8" class="tab-pane">#}
+                        {#                            <div id="sc-icr" class="panel-body">#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                        {#                        <div id="tab-9" class="tab-pane">#}
+                        {#                            <div id="sc-cil" class="panel-body">#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <!-- Date range picker -->
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script type="text/javascript">
+        var CHART_WIDTH = $('.panel-body').width();
+        function chart(options) {
+            $(options.id).highcharts({
+                chart: {
+                    width: CHART_WIDTH,
+                    height: 400
+                },
+                title: {
+                    text: options.title
+                },
+                xAxis: {
+                    categories: options.categories
+                },
+                yAxis: {
+                    title: {
+                        text: options.title + ' (%)'
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                tooltip: {
+                    formatter: function () {
+                        var s = '<b>' + this.x + '<b><br/>' +
+                                this.series.name + ': ' + this.y + '%';
+                        return s;
+                    }
+                },
+                series: options.series
+            });
+        }
+
+        $(document).ready(function () {
+            $.ajax({
+                url: '{{ url_for('stats.sales_consultant') }}',
+                headers: {
+                    Accept: "application/json"
+                },
+                data: $('form#filter-date-form').serialize(),
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    var categoriesData = [];
+                    var currentOrdersData = [];
+                    var currentDeliveredData = [];
+                    // CR Data
+                    var currentCrData = [];
+                    var preCrData = [];
+                    var avgCrData = [];
+                    // FR Data
+                    var currentFrData = [];
+                    var preFrData = [];
+                    var avgFrData = [];
+                    // ACR Data
+                    var currentAcrData = [];
+                    var preAcrData = [];
+                    var avgAcrData = [];
+                    // TDR Data
+                    var currentTdrData = [];
+                    var preTdrData = [];
+                    var avgTdrData = [];
+
+                    // RDR Data
+                    var currentRdrData = [];
+                    var preRdrData = [];
+                    var avgRdrData = [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        categoriesData.push(data[i].category);
+                        currentMonthData = data[i].data.current_month;
+                        prevMonthData = data[i].data.prev_month;
+
+                        currentOrdersData.push(currentMonthData.total_orders_count);
+                        currentDeliveredData.push(currentMonthData.total_deliver_count);
+
+                        currentCrData.push(chartsHelper.calcPer(currentMonthData.total_orders_count, currentMonthData.total_rx_customer_count));
+                        preCrData.push(chartsHelper.calcPer(prevMonthData.total_orders_count, prevMonthData.total_rx_customer_count));
+                        avgCrData.push(chartsHelper.calcPer(currentMonthData.total_orders_count + prevMonthData.total_orders_count,
+                                currentMonthData.total_rx_customer_count + prevMonthData.total_rx_customer_count));
+
+                        currentFrData.push(chartsHelper.calcPer(currentMonthData.formal_customer_count, currentMonthData.total_customer_count));
+                        preFrData.push(chartsHelper.calcPer(prevMonthData.formal_customer_count, prevMonthData.total_customer_count));
+                        avgFrData.push((chartsHelper.calcPer(currentMonthData.formal_customer_count + prevMonthData.formal_customer_count,
+                                currentMonthData.total_customer_count + prevMonthData.total_customer_count)));
+
+                        currentAcrData.push(chartsHelper.calcPer(currentMonthData.closed_instore_appt_count, currentMonthData.instore_appt_count));
+                        preAcrData.push(chartsHelper.calcPer(prevMonthData.closed_instore_appt_count, prevMonthData.instore_appt_count));
+                        avgAcrData.push((chartsHelper.calcPer(currentMonthData.closed_instore_appt_count + prevMonthData.closed_instore_appt_count,
+                                currentMonthData.instore_appt_count + prevMonthData.instore_appt_count)));
+
+                        currentTdrData.push(chartsHelper.calcPer(currentMonthData.test_drive_customer_count, currentMonthData.total_rx_customer_count));
+                        preTdrData.push(chartsHelper.calcPer(prevMonthData.test_drive_customer_count, prevMonthData.total_rx_customer_count));
+                        avgTdrData.push((chartsHelper.calcPer(currentMonthData.test_drive_customer_count + prevMonthData.test_drive_customer_count,
+                                currentMonthData.total_rx_customer_count + prevMonthData.total_rx_customer_count)));
+
+                        currentRdrData.push(Math.round(currentMonthData.avg_rx_duration / 60));
+                        preRdrData.push(Math.round(prevMonthData.avg_rx_duration / 60));
+                        avgRdrData.push(Math.round((currentMonthData.avg_rx_duration + prevMonthData.avg_rx_duration) / 2 / 60));
+                    }
+
+                    $('#sc-orders').highcharts({
+                        chart: {
+                            width: CHART_WIDTH,
+                            height: 400
+                        },
+                        title: {
+                            text: '本月成交'
+                        },
+                        xAxis: {
+                            categories: categoriesData
+                        },
+                        yAxis: {
+                            title: {
+                                text: '成交/交车 (台)'
+                            }
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        tooltip: {
+                            formatter: function () {
+                                return '<b>' + this.x + '<b><br/>' + this.series.name + ': ' + this.y + '台';
+                            }
+                        },
+                        series: [{
+                            type: 'column',
+                            name: '本月成交',
+                            data: currentOrdersData
+                        }, {
+                            type: 'column',
+                            name: '本月交车',
+                            data: currentDeliveredData
+                        }]
+                    });
+
+                    chart({
+                        id: '#sc-cr',
+                        title: '转化率',
+                        categories: categoriesData,
+                        series: [{
+                            type: 'column',
+                            name: '本月转化率',
+                            data: currentCrData
+                        }, {
+                            type: 'column',
+                            name: '上月转化率',
+                            data: preCrData
+                        }, {
+                            type: 'line',
+                            name: '平均转化率',
+                            data: avgCrData,
+                            marker: {
+                                lineWidth: 1
+                            }
+                        }]
+                    });
+
+                    chart({
+                        id: '#sc-fr',
+                        title: '留档率',
+                        categories: categoriesData,
+                        series: [{
+                            type: 'column',
+                            name: '本月留档率',
+                            data: currentFrData
+                        }, {
+                            type: 'column',
+                            name: '上月留档率',
+                            data: preFrData
+                        }, {
+                            type: 'line',
+                            name: '平均留档率',
+                            data: avgFrData,
+                            marker: {
+                                lineWidth: 1
+                            }
+                        }]
+                    });
+
+                    chart({
+                        id: '#sc-acr',
+                        title: '邀约完成率',
+                        categories: categoriesData,
+                        series: [{
+                            type: 'column',
+                            name: '本月邀约完成率',
+                            data: currentAcrData
+                        }, {
+                            type: 'column',
+                            name: '上月邀约完成率',
+                            data: preAcrData
+                        }, {
+                            type: 'line',
+                            name: '平均邀约完成率',
+                            data: avgAcrData,
+                            marker: {
+                                lineWidth: 1
+                            }
+                        }]
+                    });
+
+                    chart({
+                        id: '#sc-tdr',
+                        title: '试驾率',
+                        categories: categoriesData,
+                        series: [{
+                            type: 'column',
+                            name: '本月试驾率',
+                            data: currentTdrData
+                        }, {
+                            type: 'column',
+                            name: '上月试驾率',
+                            data: preTdrData
+                        }, {
+                            type: 'line',
+                            name: '平均试驾率',
+                            data: avgTdrData,
+                            marker: {
+                                lineWidth: 1
+                            }
+                        }]
+                    });
+
+                    $('#sc-rdr').highcharts({
+                        chart: {
+                            width: CHART_WIDTH,
+                            height: 400
+                        },
+                        title: {
+                            text: '接待时长'
+                        },
+                        xAxis: {
+                            categories: categoriesData
+                        },
+                        yAxis: {
+                            title: {
+                                text: '接待时长 (分钟)'
+                            }
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        tooltip: {
+                            formatter: function () {
+                                var humanTime = this.y + '分钟';
+                                if (this.y > 60) {
+                                    humanTime = Math.round(this.y / 60) + '小时' + Math.round(this.y % 60) + '分钟';
+                                }
+
+                                return '<b>' + this.x + '<b><br/>' + this.series.name + ': ' + humanTime;
+                            }
+                        },
+                        series: [{
+                            type: 'column',
+                            name: '本月接待时长',
+                            data: currentRdrData
+                        }, {
+                            type: 'column',
+                            name: '上月接待时长',
+                            data: preRdrData
+                        }, {
+                            type: 'line',
+                            name: '平均接待时长',
+                            data: avgRdrData,
+                            marker: {
+                                lineWidth: 1
+                            }
+                        }]
+                    });
+                },
+                error: function () {
+                }
+            });
+            // Javascript to enable link to tab
+            var url = document.location.toString();
+            if (url.match('#')) {
+                $('.nav-tabs a[href=#' + url.split('#')[1] + ']').tab('show');
+            }
+
+            // Change hash for page-reload
+            $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                window.location.hash = e.target.hash;
+            })
+        });
+    </script>
+{% endblock %}

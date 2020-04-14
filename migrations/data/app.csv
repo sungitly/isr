@@ -1,0 +1,11 @@
+name,type,api_key,secret_key,version,version_num,download_url,desc,release_note,created_on,created_by,updated_on,updated_by
+crm,iPhone,crm-4b3ae75fba3cf5e2,2c13eb641b8784b8f5e98cbe941e04b3,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/crm-iphone.plist,超级前台销售客户端,,"2015-06-09 22:50:11",-1000,"2015-06-09 22:50:11",-1000
+crmrx,iPad,crmrx-062d0d7cdc6d0a45,b5839fc6514f184c3038f66e6c95993e,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/crm-ipad.plist,超级前台前台客户端,,"2015-06-09 22:50:11",-1000,"2015-06-09 22:50:11",-1000
+isr,Android,isr-7f795d1a0c33542f,f64bf2633e2604bcb2d86908a8a50cf9,1.0.0,1,https://uapps.b0.upaiyun.com/r/isr.apk,超级前台销售客户端,,"2015-06-09 22:50:11",-1000,"2015-06-09 22:50:11",-1000
+crmmgmt,iPhone,crmmgmt-70b558f3a2d038fb,9458c55e95d936ecce29463f483fc334,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/crmmgmt-iphone.plist,超级前台经理客户端,,"2015-12-17 08:00:00",-1000,"2015-12-17 08:00:00",-1000
+ubao-ios,iPhone,ubao-ios-d8590e8c1c6e4b1a,b5e7e8153af579ff4c4cd056fff740ad,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/ubao-iphone.plist,中凡U保iPhone客户端,,"2016-02-05 18:00:00",-1000,"2016-02-05 18:00:00",-1000
+ubao-droid,Android,ubao-droid-5ea69abc6211652c,91e5cff2f811c6496e3502473bbb8378,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/ubao.apk,中凡U保Android客户端,,"2016-02-05 18:00:00",-1000,"2016-02-05 18:00:00",-1000
+uubao-ios,iPhone,uubao-ios-e58010ce678338a8,05eb082e1ae0a43ca49da7e7756b1d4b,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/uubao-iphone.plist,U保iPhone客户端,,"2016-02-05 18:00:00",-1000,"2016-02-05 18:00:00",-1000
+uubao-droid,Android,uubao-droid-53526710849df19e,a92423296ff39938a0619ea91d3244be,1.0.0,1,itms-services://?action=download-manifest&url=https://uapps.b0.upaiyun.com/r/uubao.apk,U保Android客户端,,"2016-02-05 18:00:00",-1000,"2016-02-05 18:00:00",-1000
+ucenter,Web,ucenter-fb7d88254404c13e,2cfc5b0a21902cc8dc08e3b40e2e6a97,1.0.0,1,http://ucenter.auc2.com/admin/,UCenter,,"2016-04-03 18:00:00",-1000,"2016-04-03 18:00:00",-1000
+

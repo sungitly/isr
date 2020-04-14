@@ -1,0 +1,145 @@
+//colors
+$color_nile_blue_80_approx: rgba(39,58,75,0.8);
+$color_gallery_approx: #eee;
+$color_sandy_brown_approx: #f8ac59;
+$color_log_cabin_approx: #222;
+
+//urls
+$url_0: url(images/ie-spacer.gif);
+$url_1: url(images/gritter.png);
+$url_2: url(images/gritter-light.png);
+
+#gritter-notice-wrapper {
+	position: fixed;
+	top: 40px;
+	right: 20px;
+	width: 301px;
+	z-index: 9999;
+	animation-duration: 1s;
+	animation-fill-mode: both;
+	animation-name: bounceIn;
+	&.top-left {
+		left: 20px;
+		right: auto;
+	}
+	&.bottom-right {
+		top: auto;
+		left: auto;
+		bottom: 20px;
+		right: 20px;
+	}
+	&.bottom-left {
+		top: auto;
+		right: auto;
+		bottom: 20px;
+		left: 20px;
+	}
+}
+@keyframes bounceIn {
+	0% {
+		opacity: 0;
+		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+		transform: scale(.3);
+	}
+	50% {
+		opacity: 1;
+		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+		transform: scale(1.05);
+	}
+	70% {
+		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+		transform: scale(.9);
+	}
+	100% {
+		opacity: 1;
+		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+		transform: scale(1);
+	}
+}
+.gritter-item-wrapper {
+	position: relative;
+	margin: 0 0 10px 0;
+	background: $url_0;
+}
+.hover {
+	.gritter-top {
+	}
+	.gritter-item {
+		background-position: right -40px;
+	}
+}
+.gritter-bottom {
+	height: 8px;
+	margin: 0;
+}
+.gritter-item {
+	display: block;
+	background-color: $color_nile_blue_80_approx;
+	//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+	border-radius: 4px;
+	color: $color_gallery_approx;
+	padding: 10px 11px;
+	font-size: 11px;
+	p {
+		padding: 0;
+		margin: 0;
+		word-wrap: break-word;
+	}
+	a:hover {
+		color: $color_sandy_brown_approx;
+		text-decoration: underline;
+	}
+}
+.gritter-close {
+	display: none;
+	position: absolute;
+	top: 5px;
+	right: 3px;
+	background: $url_1 no-repeat left top;
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+	text-indent: -9999em;
+}
+.gritter-title {
+	font-size: 12px;
+	font-weight: bold;
+	padding: 0 0 7px 0;
+	display: block;
+	text-transform: uppercase;
+}
+.gritter-image {
+	width: 48px;
+	height: 48px;
+	float: left;
+}
+.gritter-with-image {
+	padding: 0;
+	width: 220px;
+	float: right;
+}
+.gritter-without-image {
+	padding: 0;
+}
+.gritter-light {
+	.gritter-item {
+		background-image: $url_2;
+		color: $color_log_cabin_approx;
+	}
+	.gritter-bottom {
+		background-image: $url_2;
+		color: $color_log_cabin_approx;
+	}
+	.gritter-top {
+		background-image: $url_2;
+		color: $color_log_cabin_approx;
+	}
+	.gritter-close {
+		background-image: $url_2;
+		color: $color_log_cabin_approx;
+	}
+	.gritter-title {
+		//Instead of the line below you could use @include text-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+		text-shadow: none;
+	}
+}

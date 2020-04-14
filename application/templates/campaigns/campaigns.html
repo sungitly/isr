@@ -1,0 +1,102 @@
+{% extends 'layout/base.html' %}
+
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}活动管理 <span class="badge badge-primary">{{ campaigns.total }}</span></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="row">
+                            {% for category, message in messages %}
+                                <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="row">
+                        <div class="col-sm-2 m-b-xs">
+                            <a href="/campaigns/new" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;新建活动</a>
+                        </div>
+                        <form role="form" id="search-form" action="{{ url_for('campaigns.campaigns') }}" method="GET">
+                            <div class="col-sm-7 m-b-xs">
+                                <div data-toggle="buttons" class="btn-group campaign-types">
+                                    {% for subfield in form.type %}
+                                        <label class="btn btn-sm btn-white {% if form.type.data == subfield.data %}active{% endif %}">{{ subfield }}
+                                            {{ subfield.label.text }}
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {{form.sort_by_field()}}
+                            {{form.sort_by_order()}}
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    {{ form.keywords(class="form-control input-sm", placeholder=form.keywords.label.text) }}<span
+                                        class="input-group-btn">
+                                        <button type="submit" class="btn btn-sm btn-primary">搜索</button> </span></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table_campaigns">
+                            <thead>
+                            <tr>
+                                <th>活动名称</th>
+                                <th>相关车型</th>
+                                <th>活动时间</th>
+                                <th>发布时间</th>
+                                <th>推送时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if campaigns.total > 0 %}
+                                {% for campaign in campaigns.items %}
+                                    <tr>
+                                        <td>{{ campaign.title }}</td>
+                                        <td>{{ campaign.related_cars }}</td>
+                                        <td>{{ campaign.start }}</td>
+                                        <td>{{ campaign.end }}</td>
+                                        <td>{{ campaign.notify_date }}</td>
+                                        <td><a href="/campaigns/{{ campaign.id }}">编辑</a></td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-danger">没有相关活动</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            <div class="pull-right">
+                                {% if campaigns.pages > 1 %}
+                                    {{ pagination(campaigns) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript" src="{{assets('js/plugins/sort_table.js')}}"></script>
+    <script type="text/javascript" src="{{ assets('js/campaigns/campaigns.js') }}"></script>
+{% endblock %}

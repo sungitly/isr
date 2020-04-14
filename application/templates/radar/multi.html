@@ -1,0 +1,49 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_filter.html' import filter_date %}
+
+{% block page_css %}
+    <link href="{{ assets('css/funnel-chart.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>数据中心/高意向客流分析</h5>
+            </div>
+            <div class="ibox-content">
+                {{ filter_date() }}
+                <div class="alert alert-info">
+                    <p>请选择时间段,加载数据统计.</p>
+                </div>
+                <section class="section" id="tab-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#chartpanel-1" data-toggle="tab">高意向客流车型关注度</a></li>
+                        <li><a href="#chartpanel-2" data-toggle="tab">高意向客流平均停留时间</a></li>
+                        <li><a href="#chartpanel-3" data-toggle="tab">高意向客流首次非首次占比</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="chartpanel-1">
+                            <div id="data-4-1"></div>
+                            <div id="detail-trend-4-1" class="fn-hide">
+                                <div id="data-4-1-1"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-2">
+                            <div id="data-4-2"></div>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-3">
+                            <div id="data-4-3"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script src="{{ assets('js/radar/multi.js') }}"></script>
+{% endblock %}

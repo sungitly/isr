@@ -1,0 +1,100 @@
+{% extends 'layout/base.html' %}
+
+{% block page_css %}
+    <link href="{{ assets('css/jsgrid.css') }}" rel="stylesheet"/>
+    <link href="{{ assets('css/jsgrid-theme.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>库存管理</h5>
+                </div>
+                <div class="ibox-content">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="row">
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="row">
+                        <div class="pull-right ">
+                            <div class="btn-group btn-group-sm m-r-lg" role="group">
+                                <a class="btn btn-toolbar"
+                                   href="{{ url_for('inventories.download_template') }}">模板下载</a>
+                                <button type="button" class="btn btn-toolbar" data-toggle="modal"
+                                        data-target="#upload-modal-form">库存导入
+                                </button>
+                                <a class="btn btn-toolbar"
+                                   href="{{ url_for('inventories.download_inv') }}">库存导出</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="jsGrid" class="table-responsive">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="upload-modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <form role="form" action="{{ url_for('inventories.import_inv') }}" method="POST"
+                  enctype="multipart/form-data">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div><h3 class="m-t-none m-b">导入库存表</h3>
+                                <input class="form-control" id="upload_file" name="upload_file" type="file">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-primary" type="submit"><strong>提交</strong></button>
+                        <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div><h3 class="m-t-none m-b">库存详情</h3>
+                            <form role="form" class="form-horizontal" id="update-form">
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-sm btn-primary" type="button" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="detail-template" type="text/template">
+        <div class="form-group">
+            <label class="col-sm-2 control-label label-name">placeholderName</label>
+            <div class="col-sm-10">
+              <p class="form-control-static">placeholderValue</p>
+            </div>
+        </div>
+    </script>
+{% endblock %}
+
+{% block base_js %}
+    <script>
+        var inv_status_items = {{ inv_status_items|tojson }};
+    </script>
+    <script type="text/javascript" src="{{ assets('js/inventories/inventories.js') }}"></script>
+{% endblock %}

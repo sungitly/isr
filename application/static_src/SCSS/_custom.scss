@@ -1,0 +1,77 @@
+/* Only demo */
+@media (max-width: 1000px) {
+  .welcome-message {
+    display: none;
+  }
+}
+
+.lightBoxGallery {
+  text-align: center;
+}
+
+.lightBoxGallery img {
+  margin: 5px;
+}
+
+// Customization for Unicorn
+
+#float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.margin-left-xs {
+  margin-left: 5px;
+}
+
+
+th.table-sortable:hover {
+  cursor: pointer;
+}
+
+th.table_sort_normal > span.sort-indicator:before {
+  content: "\e022";
+}
+
+th.table_sort_asc > span.sort-indicator:before {
+  content: "\e013";
+}
+th.table_sort_desc > span.sort-indicator:before {
+  content: "\e012";
+}
+
+span.sort-indicator {
+  display: inline-block;
+  font-family: 'footable';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  padding-left: 5px;
+}
+
+form.resetpassword #mobile {
+  display: inline-block;
+  width: 60%;
+  vertical-align: middle;
+  float: left;
+}
+
+.btn-toolbar {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+  &:hover, &:focus, &.focus, &:active, &.active {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+}
+
+.break-word {
+  word-wrap: break-word;
+}

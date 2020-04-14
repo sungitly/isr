@@ -1,0 +1,11 @@
+code,value,lookup_id,parent_id,order,image_url,section,version
+Q50,Q50,4,-1,10,/intent/q50.png,,1
+Q50L,Q50L,4,-1,20,/intent/q50l.png,,1
+Q60,Q60,4,-1,30,/intent/q60.png,,1
+Q60S,Q60S,4,-1,40,/intent/q60s.png,,1
+Q70L,Q70L,4,-1,50,/intent/q70l.png,,1
+ESQ,ESQ,4,-1,60,/intent/esq.png,,1
+QX50,QX50,4,-1,70,/intent/qx50.png,,1
+QX60,QX60,4,-1,80,/intent/qx60.png,,1
+QX70,QX70,4,-1,90,/intent/qx70.png,,1
+QX80,QX80,4,-1,100,/intent/qx80.png,,1

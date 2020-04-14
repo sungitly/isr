@@ -1,0 +1,105 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}客户管理 <span class="badge badge-primary">{{ customers.total }}</span></h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="search-form" action="{{ url_for('customers.customers') }}" method="GET">
+                        <div class="row">
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.status_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.intent_level_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.intent_car_ids_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 m-b-xs">
+                                {{ form.last_instore_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-4 m-b-xs">
+                                {% if current_user.has_role_in_current_store('manager') %}
+                                    {{ form.sales_filter(class="input-sm form-control input-s-sm inline") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.keywords(class="form-control input-sm", placeholder=form.keywords.label.text) }}
+                            </div>
+                            {{ form.sort_by_field() }}
+                            {{ form.sort_by_order() }}
+                            <div class="col-sm-2 m-b-xs">
+                                <button type="submit" class="btn btn-sm btn-primary">搜索</button>
+                                <a class="btn btn-sm btn-primary"
+                                   href="{{ url_for('customers.customers') }}">重置</a></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table_customers">
+                            <thead>
+                            <tr>
+                                <th>销售顾问</th>
+                                <th>客户姓名</th>
+                                <th>手机</th>
+                                <th>状态</th>
+                                <th>购买周期</th>
+                                <th>意向车型</th>
+                                <th>上次到店时间</th>
+                                <th>最近跟进备注</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for customer in customers.items %}
+                                <tr>
+                                    <td>{{ customer.Customer.sales.username }}</td>
+                                    <td><a class='text-navy'
+                                           href='{{ url_for('customers.view_details', cid=customer.Customer.id) }}'>{{ customer.Customer.name or '' }}</a>
+                                    </td>
+                                    <td>{{ customer.Customer.mobile_display() }}</td>
+                                    <td>{{ customer.Customer.status|customer_status_str }}</td>
+                                    <td>{{ customer.Customer.intent_level|lookup_str(current_user.store_id, 'intent-level') }}</td>
+                                    <td>{{ customer.Customer.intent_car_ids | multi_lookup_str(current_user.store_id, 'intent-car') }}</td>
+                                    <td>{{ customer.Customer.last_reception_date|date_str }}</td>
+                                    <td>{{ customer.remark or '' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('customers.view_details', cid=customer.Customer.id) }}">查看</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            {% if customers.pages > 1 %}
+                                {{ pagination(customers) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript" src="{{ assets('js/plugins/sort_table.js') }}"></script>
+    <script type="text/javascript" src="{{ assets('js/customers/customers.js') }}"></script>
+{% endblock %}

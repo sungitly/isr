@@ -1,0 +1,85 @@
+{% extends 'mmgmt/layout.html' %}
+
+{% block content %}
+    <div id="container">
+        <div class="datetime">{{ today_str }}</div>
+        <div class="realtime-info">
+            <h3>实时成交</h3>
+
+            <div class="num">
+                <div>
+                    <span class="type">今日订单</span><br/>
+                    {% set _params = order_url_params.update({'status_filter': 'all'}) %}
+                    <a href="{{ url_for(order_base_url, **order_url_params) }}"><span
+                            class="green-num">{{ orders_stats['today_orders_count'] }}</span></a>
+                </div>
+                <div>
+                    <span class="type">今日交车</span><br/>
+                    {% set _params = order_url_params.update({'status_filter': 'delivered'}) %}
+                    <a href="{{ url_for(order_base_url, **order_url_params) }}">
+                        <span class="green-num">{{ orders_stats['today_delivered_count'] }}</span>
+                    </a>
+                </div>
+                <div>
+                    <span class="type">当月交车</span><br/>
+                    <a href="{{ url_for(order_base_url, **monthly_delivered_order_url_params) }}"><span
+                            class="green-num">{{ orders_stats['current_month_delivered_count'] }}</span></a>
+                </div>
+            </div>
+            <div class="details">
+                <div>剩余订单 <a
+                        href="{{ url_for(order_base_url, **all_new_order_url_params) }}"><strong>{{ orders_stats['undelivered_count'] }}</strong></a>
+                </div>
+                <div>库存 <strong>NA</strong></div>
+            </div>
+        </div>
+
+        <div class="realtime-info">
+            <h3>实时客流</h3>
+
+            <div class="num">
+                <div>
+                    <span class="type">首次</span><br/>
+                    {% set _params = rx_url_params.update({'type_filter': 'new', 'sales_filter':'all',
+                    'status_filter':'all'}) %}
+                    <a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                            class="orange-num">{{ rx_stats['rx_new'] }}</span></a>
+                </div>
+                <div>
+                    <span class="type">首邀</span><br/>
+                    {% set _params = rx_url_params.update({'type_filter': 'appt_new', 'sales_filter':'all',
+                    'status_filter':'all'}) %}
+                    <a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                            class="orange-num">{{ rx_stats['rx_appt_new'] }}</span></a>
+                </div>
+                <div>
+                    <span class="type">再次</span><br/>
+                    {% set _params = rx_url_params.update({'type_filter': 'appt', 'sales_filter':'all',
+                    'status_filter':'all'}) %}
+                    <a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                            class="orange-num">{{ rx_stats['rx_appt'] }}</span></a>
+                </div>
+                <div>
+                    <span class="type">手续</span><br/>
+                    {% set _params = rx_url_params.update({'type_filter': 'other', 'sales_filter':'all',
+                    'status_filter':'all'}) %}
+                    <a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                            class="orange-num">{{ rx_stats['rx_other'] }}</span></a>
+                </div>
+            </div>
+
+            <div class="details">
+                {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter':'all',
+                    'status_filter':'all'}) %}
+                <div>今日进店<a href="{{ url_for(rx_base_url, **rx_url_params) }}">
+                    <strong>{{ rx_stats['rx_total'] }}</strong></a>
+                </div>
+                {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter':'all',
+                    'status_filter':'in-store'}) %}
+                <div><a href="{{ url_for(rx_base_url, **rx_url_params) }}">目前在店
+                    <strong>{{ rx_stats['rx_instore'] }}</strong></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

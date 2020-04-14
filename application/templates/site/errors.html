@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>超级前台 | {{ error_code }} 错误</title>
+
+    <link href="{{ assets('font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ assets('css/style.css') }}" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+
+
+<div class="middle-box text-center animated fadeInDown">
+    <h1>{{ error_code }}</h1>
+
+    <div class="error-desc">
+        非常抱歉服务器出错了, 请稍后重试或者联系系统管理员.
+        <br/>
+        <br/>
+        <a href="/" class="btn btn-primary m-t">首页</a>
+        <a href="{{ url_for('account.logout') }}" class="btn btn-primary m-t">登出</a>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="{{ assets('js/site/errors.js') }}"></script>
+
+</body>
+
+</html>

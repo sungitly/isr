@@ -1,0 +1,120 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_filter.html' import filter_date %}
+
+{% block page_css %}
+    <link href="{{ assets('css/funnel-chart.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>数据中心/总体趋势分析</h5>
+            </div>
+            <div class="ibox-content">
+                {{ filter_date() }}
+                <div class="alert alert-info">
+                    <p>请选择时间段,加载数据统计.</p>
+                </div>
+                <section class="section" id="tab-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#chartpanel-1" data-toggle="tab">客流概览</a></li>
+                        <li><a href="#chartpanel-2" data-toggle="tab">综合趋势</a></li>
+                        <li><a href="#chartpanel-3" data-toggle="tab">首次非首次占比</a></li>
+                        <li><a href="#chartpanel-4" data-toggle="tab">高意向客流占比</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="chartpanel-1">
+                            <div id="data-2-funnel">
+                                <div class="h4 text-center" id="funnel-chart-title" style="font-weight: bold"></div>
+                                <div class="text-center" id="funnel-chart-subtitle"
+                                     style="margin-bottom: 20px;font-weight: bold; font-size: 12px"></div>
+                                <ol class="funnel-chart">
+                                    <li>
+                                        <div>监测移动设备总数 <strong id="funnel-totalCount">-</strong></div>
+                                    </li>
+                                    <li>
+                                        <div>总客流 <strong id="funnel-effectiveCount">-</strong></div>
+                                    </li>
+                                    <li class="column-2">
+                                        <div class="left">首次进店客流 <strong id="funnel-newCount">-</strong></div>
+                                        <div class="right">非首次进店客流 <strong id="funnel-oldCount">-</strong></div>
+                                    </li>
+                                    <li>
+                                        <div>高意向客流 <strong id="funnel-intentCount">-</strong></div>
+                                    </li>
+                                    <li>
+                                        <div>试驾客流<br/><strong id="funnel-driveCount">-</strong></div>
+                                    </li>
+                                </ol>
+                            </div>
+                            <br>
+                            <hr>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">字段定义</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-2-1">
+                                <tr>
+                                    <td>监测移动设备总数</td>
+                                    <td>在监测周期内，监测到的所有移动设备总数</td>
+                                </tr>
+                                <tr>
+                                    <td>总客流</td>
+                                    <td>在一层展厅停留超过15分钟以上的客户（组）</td>
+                                </tr>
+                                <tr>
+                                    <td>高意向客流</td>
+                                    <td>在一层展厅停留超过30分钟以上，且进入展车内停留超过10分钟的客户（组）</td>
+                                </tr>
+                                <tr>
+                                    <td>车型关注度</td>
+                                    <td>高意向客户关注各车型的比例</td>
+                                </tr>
+                                <tr>
+                                    <td>首次进店客流</td>
+                                    <td>总客流中，首次到店客户数（组）</td>
+                                </tr>
+                                <tr>
+                                    <td>非首次进店客流</td>
+                                    <td>总客流中，再次到店客户数（组，等于“总客流-首次进店”）</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-2">
+                            <div id="data-2-2"></div>
+                            <hr>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>总客流</th>
+                                    <th>首次进店客流</th>
+                                    <th>非首次进店客流</th>
+                                    <th>高意向客流</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-2-2"></tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-3">
+                            <div id="data-2-3"></div>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-4">
+                            <div id="data-2-4"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script src="{{ assets('js/radar/tendency.js') }}"></script>
+{% endblock %}

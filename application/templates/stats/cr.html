@@ -1,0 +1,97 @@
+{% extends 'layout/base.html' %}
+
+{% from 'macros/_filter.html' import filter_date %}
+
+{% block content %}
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}转化率</h5>
+
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                {{ filter_date() }}
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1">整体转化率</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2">车型转化率</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-3">试驾转化率</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div id="weekly-summary-cr" class="panel-body">
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div id="cars-cr" class="panel-body">
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <div id="weekly-test-drive-cr" class="panel-body">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <!-- Date range picker -->
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var CHART_WIDTH = $('.panel-body').width();
+            $('form#filter-date-form').on('click', 'button.btn-submit', function () {
+                $.ajax({
+                    url: '{{ url_for('stats.conversion_rate') }}',
+                    headers: {
+                        Accept: "application/json"
+                    },
+                    data: $('form#filter-date-form').serialize(),
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        var categoriesData = [];
+                        var carCategoriesData = [];
+                        var summarySeriesData = [];
+                        var carModelsSeriesData = [];
+                        var testDriveSeriesData = [];
+
+                        var weeklyData = data.weekly_stats;
+                        for (var i = 0; i < weeklyData.length; i++) {
+                            categoriesData.push(weeklyData[i].category);
+
+                            summarySeriesData.push(chartsHelper.calcPer(weeklyData[i].data.total_orders_count, weeklyData[i].data.total_rx_customer_count));
+                            testDriveSeriesData.push(chartsHelper.calcPer(weeklyData[i].data.test_drive_ordered_customer_count, weeklyData[i].data.test_drive_customer_count));
+                        }
+
+                        var carData = data.car_stats;
+                        for (var j = 0; j < carData.length; j++) {
+                            carCategoriesData.push(carData[j].category);
+                            carModelsSeriesData.push(chartsHelper.calcPer(carData[j].data.orders_count_by_car, carData[j].data.rx_customers_count_by_car));
+                        }
+
+                        chartsHelper.drawStandardSplineChart('#weekly-summary-cr', CHART_WIDTH, categoriesData, summarySeriesData, '转化率(周)', '转化率');
+                        chartsHelper.drawStandardSplineChart('#cars-cr', CHART_WIDTH, carCategoriesData, carModelsSeriesData, '车型转化率', '车型转化率');
+                        chartsHelper.drawStandardSplineChart('#weekly-test-drive-cr', CHART_WIDTH, categoriesData, testDriveSeriesData, '试驾转化率(周)', '试驾转化率');
+
+                    },
+                    error: function () {
+
+                    }
+                });
+            })
+        });
+    </script>
+{% endblock %}

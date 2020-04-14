@@ -1,0 +1,91 @@
+{% extends 'layout/base.html' %}
+
+{% block page_css %}
+    <link href="{{ assets('css/jsgrid.css') }}" rel="stylesheet" xmlns="http://www.w3.org/1999/html"/>
+    <link href="{{ assets('css/jsgrid-theme.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="ibox-title">
+                    <h5>{{ store_name }}</h5>
+                    <br>
+                    <h6>新增类型:{{ lookup_by_id.description }}</h6>
+                    <h6>当前版本:<strong>{{ lookup_by_id.version }}</strong></h6>
+                </div>
+                <br>
+                <div class="ibox-content">
+                    <form role="form" id="search-form"
+                          action="{{ url_for('ops.lookupvalues_add', lookup_id=lookup_id) }}"
+                          method="POST">
+                        <div class="row">
+                            <div class="pull-right ">
+                                <div class="btn-group btn-group-sm m-r-lg" role="group">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <a href="{{ url_for('ops.lookupvalues') }}" class="btn btn-toolbar"
+                                       role="button">返回</a>
+                                    <input class="btn btn-toolbar" id="add-oneline" type="button" value="新增一行">
+                                    <input class="btn btn-toolbar" id="del-oneline" type="button" value="删除一行">
+                                    <input class="btn btn-toolbar" id="submit" type="submit" value="提交更新">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="lookupvalues-data">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ descriptions["value"] }}</th>
+                                        <th>{{ descriptions["orders"] }}</th>
+                                        <th>{{ descriptions["section"] }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td><input class="form-control" name="value" type="text"></td>
+                                        <td><input class="form-control" name="orders" type="text"></td>
+                                        <td><input class="form-control" name="section" type="text"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="jsGrid" class="table-responsive">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block base_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/base.js') }}"></script>
+    <script>
+        var lookupvalue_line = "<tbody><tr><td><input class=\"form-control\" " +
+                "name=\"value\" type=\"text\"></td><td><input class=\"form-control\" " +
+                "name=\"orders\" type=\"text\"></td><td><input class=\"form-control\" " +
+                "name=\"section\" type=\"text\"></td></tr></tbody>"
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#add-oneline').on('click', function () {
+                $('#lookupvalues-data').append(lookupvalue_line)
+            });
+            $('#del-oneline').on('click', function () {
+                $('#lookupvalues-data tbody:last').remove()
+            });
+        });
+    </script>
+{% endblock %}

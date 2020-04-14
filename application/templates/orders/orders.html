@@ -1,0 +1,203 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}订单管理 <span class="badge badge-primary">{{ orders.total }}</span></h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="row">
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    <form role="form" id="search-form" action="{{ url_for('orders.orders') }}" method="GET">
+                        <div class="row">
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.start_date(class="input-sm form-control input-s-sm inline", placeholder=form.start_date.description) }}
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.end_date(class="input-sm form-control input-s-sm inline", placeholder=form.end_date.description) }}
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.sales_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.status_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                {{ form.ordered_car_ids_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.keywords(class="form-control input-sm", placeholder=form.keywords.label.text) }}
+                            </div>
+                            {{ form.sort_by_field() }}
+                            {{ form.sort_by_order() }}
+                            <div class="col-sm-1 m-b-xs">
+                                <div class="input-sm form-group input-s-sm inline">
+                                    <label>{{ form.history() }} {{ form.history.description }}</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                <button type="submit" class="btn btn-sm btn-primary">搜索</button>
+                                <a class="btn btn-sm btn-primary"
+                                   href="{{ url_for('orders.orders') }}">重置</a></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table_orders">
+                            <thead>
+                            <tr>
+                                <th>成交时间</th>
+                                <th>销售顾问</th>
+                                <th>客户姓名</th>
+                                <th>成交车型</th>
+                                <th>交车时间</th>
+                                <th>订单号</th>
+                                <th>状态</th>
+                                <th>历史订单</th>
+                                <th>保险？</th>
+                                <th>贷款？</th>
+                                <th>发票抬头</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for order in orders.items %}
+                                <tr>
+                                    <td>{{ order.created_on|date_str }}</td>
+                                    <td>{{ order.sales.username }}</td>
+                                    <td><a class='text-navy'
+                                           href='{{ url_for('customers.view_details', cid=order.customer.id) }}'>{{ order.customer.name or '' }}</a>
+                                    </td>
+                                    <td>{{ order.ordered_car_name }}</td>
+                                    <td>{{ order.delivered_date|date_str }}</td>
+                                    <td>{{ order.order_no }}</td>
+                                    <td>
+                                        {% if order.status == 'delivered' %}
+                                            <label class="label label-success">已交车</label>
+                                        {% elif order.status == 'cancelled' %}
+                                            <label class="label label-default">已取消</label>
+                                        {% else %}
+                                            <label class="label label-warning">未交车</label>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ order.history_order | bool_str }}</td>
+                                    <td>{{ order.include_insurance | bool_str }}</td>
+                                    <td>{{ order.is_mortgage | bool_str }}</td>
+                                    <td>{{ order.receipt_title or '' }}</td>
+                                    <td>
+                                        {% if order.status not in ('cancelled', 'delivered') %}
+                                            <a class="btn btn-primary btn-xs btn-cancel" data="{{ order.id }}">取消</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            {% if orders.pages > 1 %}
+                                {{ pagination(orders) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal -->
+        <form action="{{ url_for('orders.cancel_order') }}" class="form" role="form" id="cancel_form" method="POST">
+            {{ cancel_form.csrf_token() }}
+            {{ cancel_form.order_id() }}
+        </form>
+    </div>
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>您是否确认要取消这个订单？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary btn-confirm">确认</button>
+                </div>
+            </div>
+            <input type="hidden" name="data" id="data">
+            <input type="hidden" name="action" id="action">
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{ assets('js/plugins/sort_table.js') }}"></script>
+    <script type="text/javascript" src="{{ assets('js/orders/orders.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#start_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+            $('#end_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+        });
+
+        var searchForm = $('#search-form');
+        searchForm.on('change', 'select', function () {
+            $('#search-form').submit();
+        });
+        searchForm.on('change', 'input:checkbox', function () {
+            $('#search-form').submit();
+        });
+
+        var sort_ths = {
+            0: 'created_on',
+            4: 'delivered_date',
+            6: 'status'
+        };
+        var sort_by_field = $('#sort_by_field');
+        var sort_by_order = $('#sort_by_order');
+        var field = sort_by_field.attr('value');
+        var order = sort_by_order.attr('value');
+        var init = {};
+        if (field && order) {
+            order = (+order | 0) % 3;
+            init[field] = order;
+        }
+        $('#table_orders').sort_table({
+            init: init, ids: sort_ths, callback: function (id, order, field) {
+                sort_by_field.attr('value', field);
+                sort_by_order.attr('value', order);
+                searchForm.submit();
+            }
+        });
+
+    </script>
+{% endblock %}

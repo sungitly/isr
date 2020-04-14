@@ -1,0 +1,15 @@
+{% macro stores(all_stores) %}
+    <span class="company-name">
+        {% with num_stores = all_stores | length %}
+            {% if num_stores > 1 %}
+                <select id="select_store_id" class="chosen-select">
+                    {% for store in all_stores %}
+                    <option value="{{ store.id }}" {{ store_id_selected(store.id) | cond_return_value('selected') }}>{{ store.name }}</option>
+                    {% endfor %}
+                </select>
+            {% elif num_stores == 1 %}
+                {{ all_stores[0].name }}
+            {% endif %}
+        {% endwith %}
+    </span>
+{% endmacro %}

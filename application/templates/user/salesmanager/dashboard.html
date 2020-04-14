@@ -1,0 +1,172 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>实时概览</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <small class="stats-label">今日订单数</small>
+                            {% set _params = order_url_params.update({'status_filter': 'all'}) %}
+                            <h4><a href="{{ url_for(order_base_url, **order_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ orders_stats['today_orders_count'] }}</a></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">月累计交车</small>
+                            {% set _params = monthly_order_url_params.update({'status_filter': 'delivered'}) %}
+                            <h4><a href="{{ url_for(order_base_url, **monthly_delivered_order_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ orders_stats['current_month_delivered_count'] }}</a>
+                            </h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">未交车订单</small>
+                            {% set _params = monthly_order_url_params.update({'status_filter': 'new'}) %}
+                            <h4><a href="{{ url_for(order_base_url, **monthly_order_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ orders_stats['current_month_new_count'] }}</a></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter':'all', 'status_filter':'all'}) %}
+                            <small class="stats-label">今日到店</small>
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['total'] }}</a></h4>
+                        </div>
+
+                        <div class="col-xs-3">
+                            {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter':'all', 'status_filter':'in-store'}) %}
+                            <small class="stats-label">在店客户</small>
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['instore'] }}</a></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter':'all', 'status_filter':'completed'}) %}
+                            <small class="stats-label">离店客户</small>
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['complete'] }}</a></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <small class="stats-label">首次</small>
+                            {% set _params = rx_url_params.update({'type_filter': 'new', 'sales_filter':'all', 'status_filter':'all'}) %}
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['new'] }}</a></h4>
+                        </div>
+
+                        <div class="col-xs-3">
+                            <small class="stats-label">首邀</small>
+                            {% set _params = rx_url_params.update({'type_filter': 'appt_new', 'sales_filter':'all', 'status_filter':'all'}) %}
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['appt_new'] }}</a></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">再次</small>
+                            {% set _params = rx_url_params.update({'type_filter': 'appt', 'sales_filter':'all', 'status_filter':'all'}) %}
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['appt'] }}</a></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">手续</small>
+                            {% set _params = rx_url_params.update({'type_filter': 'other', 'sales_filter':'all', 'status_filter':'all'}) %}
+                            <h4><a href="{{ url_for(rx_base_url, **rx_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ customer_stats['other'] }}</a></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <small class="stats-label">下次未预约</small>
+                            {% set _params = appt_url_params.update({'status_filter': 'opened', 'type_filter':'followup'}) %}
+                            <h4><a href="{{ url_for(appt_base_url, **appt_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ appt_stats['open_followup'] }}/{{ appt_stats['followup'] }}</a>
+                            </h4>
+                        </div>
+
+                        <div class="col-xs-3">
+                            <small class="stats-label">邀约未到店</small>
+                            {% set _params = appt_url_params.update({'status_filter': 'opened', 'type_filter':'instore'}) %}
+                            <h4><a href="{{ url_for(appt_base_url, **appt_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ appt_stats['open_instore'] }}/{{ appt_stats['instore'] }}</a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>销售顾问</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table no-margins">
+                        <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>当前状态</th>
+                            <th>已接待数 <span class="badge badge-primary">{{ total_count.total }}</span></th>
+                            <th>首次 <span class="badge badge-primary">{{ total_count.new }}</span></th>
+                            <th>首邀 <span class="badge badge-primary">{{ total_count.appt_new }}</span></th>
+                            <th>再次 <span class="badge badge-primary">{{ total_count.appt }}</span></th>
+                            <th>手续 <span class="badge badge-primary">{{ total_count.other }}</span></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sale in sales %}
+                            <tr>
+                                <td>{{ sale.username }}</td>
+                                <td><span class="label {{ sale.status_label_css }}">{{ sale.status_label }}</span></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter': sale.id, 'status_filter': 'all'}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.total }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'new', 'sales_filter': sale.id, 'status_filter': 'all'}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.new }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'appt_new', 'sales_filter': sale.id, 'status_filter': 'all'}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.appt_new }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'appt', 'sales_filter': sale.id, 'status_filter': 'all'}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.appt }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'other', 'sales_filter': sale.id, 'status_filter': 'all'}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.other }}</span></a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block page_js %}
+    <script src="{{ assets('js/crm/salesmanager/dashboard.js') }}"></script>
+{% endblock %}

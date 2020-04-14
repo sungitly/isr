@@ -1,0 +1,15 @@
+{% macro filter_date() %}
+    <form class="form-inline" id="filter-date-form">
+        <div class="form-group" id="date_filter">
+            <label class="control-label m-l-xs m-r-xs">起始时间: </label>
+
+            <div class="input-daterange input-group" id="datepicker">
+                <input type="text" class="input-sm form-control" name="start" id="start"/>
+                <span class="input-group-addon">到</span>
+                <input type="text" class="input-sm form-control" name="end" id="end"/>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm btn-submit m-l-xs">确定</button>
+    </form>
+    <div class="hr-line-dashed"></div>
+{% endmacro %}

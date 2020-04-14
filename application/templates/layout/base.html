@@ -1,0 +1,90 @@
+{% from 'macros/_stores.html' import stores %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}{{ selected_menu.desc if selected_menu else '' }}{% endblock %}</title>
+    <link href="{{ assets('font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ assets('css/plugins/footable/footable.core.css') }}" rel="stylesheet">
+    <link href="{{ assets('css/style.css') }}" rel="stylesheet">
+    <link href="{{ assets('css/plugins/chosen/chosen.css') }}" rel="stylesheet"/>
+    {% block page_css %}
+    {% endblock %}
+</head>
+
+<body>
+<div id="wrapper">
+    {% include "includes/menu.html" %}
+
+    <div hidden="hidden">
+        <input id="store_id" type="text" value="{{ current_user.store_id }}">
+    </div>
+
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i>
+                    </a>
+                    {% if not from_mobile() %}
+                    {{ stores(current_user.get_all_stores()) }}
+                    {% endif %}
+                    {% block navbar_search %}
+                        {#                        <button class="btn btn-primary btn-circle btn-outline navbar-minimalize minimalize-styl-2"#}
+                        {#                                data-toggle="button" data-placement="left" title="Refresh" id="refresh"><i#}
+                        {#                                class="fa fa-refresh"></i>#}
+                        {#                        </button>#}
+                    {% endblock %}
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    {% block navbar_actions %}{% endblock %}
+                    {% if not from_mobile() %}
+                        <li class="pull-right">
+                            <a href="{{ url_for('account.logout') }}">
+                                <i class="fa fa-sign-out"></i>登出
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% block breadcrumb %}{% endblock %}
+        <div>
+            <div class="wrapper wrapper-content">
+                {% block content %}{% endblock %}
+            </div>
+            {% if not from_mobile() %}
+            <div id="float-btn" class="visible-sm-block visible-md-block visible-xs-block">
+                <button type="button" class="btn btn-info btn-circle btn-lg btn-refresh">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+            {% endif %}
+            <div id="right-sidebar">
+                {% block right_sidebar %}{% endblock %}
+            </div>
+
+            {% block footer %}
+                <div class="row">
+                    <div class="footer">
+                        <div>
+                            <strong>Copyright</strong>&nbsp;&nbsp;悠尼客（上海）企业管理有限公司 &copy; 2015-2016
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<div id="spiner"></div>
+{% block base_js %}
+<script src="{{ assets('js/base.js') }}"></script>
+{% endblock %}
+{% block page_js %}
+{% endblock %}
+</body>
+</html>

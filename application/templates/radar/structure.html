@@ -1,0 +1,82 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_filter.html' import filter_date %}
+
+{% block page_css %}
+    <link href="{{ assets('css/funnel-chart.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>数据中心/客流分析</h5>
+            </div>
+            <div class="ibox-content">
+                {{ filter_date() }}
+                <div class="alert alert-info">
+                    <p>请选择时间段,加载数据统计.</p>
+                </div>
+                <section class="section" id="tab-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#chartpanel-1" data-toggle="tab">客流结构</a></li>
+                        <li><a href="#chartpanel-2" data-toggle="tab">多店非首次和单店非首次</a></li>
+                        <li><a href="#chartpanel-3" data-toggle="tab">客流时段</a></li>
+                        <li><a href="#chartpanel-4" data-toggle="tab">客户平均停留时长</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="chartpanel-1">
+                            <div id="data-3-1"></div>
+                            <hr>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>展厅客流</th>
+                                    <th>试乘试驾客流</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-3-1"></tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-2">
+                            <div id="data-3-2"></div>
+                            <hr>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>多店非首次</th>
+                                    <th>单店非首次</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-3-2"></tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-3">
+                            <div id="data-3-3"></div>
+                            <hr>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>客流</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tb-3-3"></tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="chartpanel-4">
+                            <div id="data-3-4"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script src="{{ assets('js/radar/structure.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,6 @@
+code,value,lookup_id,parent_id,order,image_url,section,version
+instore,预约到店,9,-1,0,,,3
+followup,预约回访,9,-1,0,,,3
+deliver,预约交车,9,-1,0,,,3
+other,预约手续,9,-1,0,,,3
+deliver_followup,交车回访,9,-1,0,,,3

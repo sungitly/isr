@@ -1,0 +1,121 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}通话记录 <span class="badge badge-primary">{{ calllogs.total }}</span></h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="search-form" action="{{ url_for('calllogs.calllogs') }}"
+                          method="GET">
+                        <div class="row">
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.start_date(class="input-sm form-control input-s-sm inline", placeholder=form.start_date.description) }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.end_date(class="input-sm form-control input-s-sm inline", placeholder=form.end_date.description) }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.sales_filter(class="input-sm form-control input-s-sm inline") }}
+                            </div>
+                            <div class="col-sm-2 m-b-xs">
+                                {{ form.keywords(class="form-control input-sm", placeholder=form.keywords.label.text) }}
+                            </div>
+                            {{form.sort_by_field()}}
+                            {{form.sort_by_order()}}
+                            <div class="col-sm-2 m-b-xs">
+                                <button type="submit" class="btn btn-sm btn-primary">搜索</button>
+                                <a class="btn btn-sm btn-primary" href="{{ url_for('appointments.appts') }}">重置</a>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table_calllog">
+                            <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>销售</th>
+                                <th>客户</th>
+                                <th>开始时间</th>
+                                <th>通话时长</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for calllog in calllogs.items %}
+                                <tr>
+                                    <td>{{ calllog.call_start | date_str }}</td>
+                                    <td>{{ calllog.sales.username }}</td>
+                                    <td><a class='text-navy'
+                                           href='{{ url_for('customers.view_details', cid=calllog.customer.id) }}'>{{ calllog.customer.name or '' }}
+                                    </td>
+                                    <td>{{ calllog.call_start | time_str }}</td>
+                                    <td>{{ calllog.duration | timedelta_str_in_min }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            {% if calllogs.pages > 1 %}
+                                {{ pagination(calllogs) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{assets('js/plugins/sort_table.js')}}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#start_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+            $('#end_date').datepicker({format: 'yyyy-mm-dd'}).on('changeDate', function (event) {
+                $('#search-form').submit();
+            });
+        });
+
+        var searchForm = $('#search-form');
+        searchForm.on('change', 'select', function () {
+            searchForm.submit();
+        });
+        var sort_ths = {
+            0: 'call_start',
+            1: 'sales_id',
+            2: 'customer_id',
+            3: 'call_start',
+            4: 'duration'
+        };
+        var sort_by_field = $('#sort_by_field');
+        var sort_by_order = $('#sort_by_order');
+        var field = sort_by_field.attr('value');
+        var order = sort_by_order.attr('value');
+        var init = {};
+        if (field && order){
+            order = (+order | 0) % 3;
+            init[field]= order;
+        }
+        $('#table_calllog').sort_table({init:init, ids: sort_ths, callback:function(id, order, field){
+            sort_by_field.attr('value', field);
+            sort_by_order.attr('value', order);
+            searchForm.submit();
+        }});
+    </script>
+{% endblock %}

@@ -1,0 +1,8 @@
+[program:isr]
+command=/var/www/ucdip/isr/venv/bin/gunicorn -c deploy/gunicorn.conf wsgi:isr
+directory=/var/www/ucdip/isr
+user=ucdip
+autostart=true
+autorestart=true
+
+environment=MODE="production", DATABASE_URL="mysql://isr:welcome@localhost/isr?charset=utf8"

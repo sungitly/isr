@@ -1,0 +1,180 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{% if back_endpoint %}
+                        <a href="{{ url_for(back_endpoint) }}">&nbsp;<i
+                                class="fa fa-arrow-left"></i>&nbsp;</a>
+                    {% endif %}晨会概览</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <small class="stats-label">昨日未留档</small>
+                            <h4><a href="{{ url_for(rx_base_url, **rx_incomplete_params) }}"
+                                   class="btn btn-danger m-r-sm">{{ rx_stats['yesterday_incomplete_count'] }}</a></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">昨日订单数</small>
+                            <h4><a href="{{ url_for(order_base_url, **order_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ orders_stats['yesterday_orders_count'] }}</a></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">月累积订单</small>
+                            <h4><a href="{{ url_for(order_base_url, **monthly_order_url_params) }}"
+                                   class="btn btn-info m-r-sm">{{ orders_stats['current_month_orders_count'] }}</a>
+                            </h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <small class="stats-label">月目标订单</small>
+                            <h4><a href="{{ url_for('settings.set_target', back_endpoint='user.morning_call') }}"
+                                   class="btn btn-info m-r-sm">{{ orders_stats['current_month_target'] }}</a></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Yesterday Customers -->
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>昨日客流</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="table table-stripped" data-page-size="8">
+                        <thead>
+                        <tr>
+                            <th>销售顾问</th>
+                            <th>接待 <span class="badge badge-primary">{{ total_rx_count.total }}</span></th>
+                            <th>首次 <span class="badge badge-primary">{{ total_rx_count.new }}</span></th>
+                            <th>首邀 <span class="badge badge-primary">{{ total_rx_count.appt_new }}</span></th>
+                            <th>再次 <span class="badge badge-primary">{{ total_rx_count.appt }}</span></th>
+                            <th>手续 <span class="badge badge-primary">{{ total_rx_count.other }}</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sale in sales_stats %}
+                            <tr>
+                                <td>{{ sale.username }}</td>
+                                {% set _params = rx_url_params.update({'type_filter': 'all', 'sales_filter': sale.id}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.total }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'new', 'sales_filter': sale.id}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.new }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'appt_new', 'sales_filter': sale.id}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.appt_new }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'appt', 'sales_filter': sale.id}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.appt }}</span></a></td>
+                                {% set _params = rx_url_params.update({'type_filter': 'other', 'sales_filter': sale.id}) %}
+                                <td><a href="{{ url_for(rx_base_url, **rx_url_params) }}"><span
+                                        class="label label-info">{{ sale.rx_count.other }}</span></a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Yesterday Orders -->
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>今日预约/到店/手续</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-stripped" data-page-size="8">
+                        <thead>
+                        <tr>
+                            <th>销售顾问</th>
+                            <th>预约回访 <span class="badge badge-primary">{{ appts_count['followup'] }}</span></th>
+                            <th>预约到店 <span class="badge badge-primary">{{ appts_count['instore'] }}</span></th>
+                            <th>预约手续 <span class="badge badge-primary">{{ appts_count['deliver'] }}</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sale in sales_stats %}
+                            <tr>
+                                <td>{{ sale.username }}</td>
+                                {% set _params = appt_url_params.update({'sales_filter': sale.id, 'type_filter':'followup'}) %}
+                                <td><a href="{{ url_for(appt_base_url, **appt_url_params) }}"><span
+                                        class="label label-info">{{ sale.followup_appt_count }}</span></a></td>
+                                {% set _params = appt_url_params.update({'sales_filter': sale.id, 'type_filter':'instore'}) %}
+                                <td><a href="{{ url_for(appt_base_url, **appt_url_params) }}"><span
+                                        class="label label-info">{{ sale.instore_appt_count }}</span></a></td>
+                                {% set _params = appt_url_params.update({'sales_filter': sale.id, 'type_filter':'deliver'}) %}
+                                <td><a href="{{ url_for(appt_base_url, **appt_url_params) }}"><span
+                                        class="label label-info">{{ sale.deliver_appt_count }}</span></a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>近期活动 <span class="badge badge-primary">{{ recent_campaigns_count }}</span></h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content table-responsive">
+                    <table class="table table-stripped" data-page-size="8">
+                        <thead>
+                        <tr>
+                            <th>活动名称</th>
+                            <th>开始时间</th>
+                            <th>结束时间</th>
+                            <th>相关车型</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for campaign in recent_campaigns %}
+                            <tr>
+                                <td>{{ campaign.title }}</td>
+                                <td>{{ campaign.start }}</td>
+                                <td>{{ campaign.end }}</td>
+                                <td>{{ campaign.related_cars or '' }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

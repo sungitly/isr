@@ -1,0 +1,115 @@
+{% extends 'layout/base.html' %}
+{% from 'macros/_utils.html' import pagination %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form role="form" id="search-form" action="{{ url_for('ops.overview') }}"
+                          method="GET">
+                        <div class="row m-t-md">
+                            <div class="col-sm-4 m-b-xs" id="date_filter">
+                                <div class="form-group">
+                                    <div class="input-daterange input-group" id="datepicker">
+                                        {{ form.start(class="input-sm form-control input-s-sm inline", placeholder=form.end.description) }}
+                                        <span class="input-group-addon">到</span>
+                                        {{ form.end(class="input-sm form-control input-s-sm inline", placeholder=form.end.description) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 m-b-xs">
+                                <button id="r_search" type="submit" class="btn btn-sm btn-primary">搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>运营简报</h5>
+
+                    <div class="ibox-tools">
+                        <button id="export_excel" class="btn btn-xs btn-primary m-r-xs">Excel</button>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-condensed" id="store-data">
+                            <thead>
+                            <tr>
+                                <th>经销商名称</th>
+                                <th>客流雷达在线时间（天）</th>
+                                <th>总客流批次</th>
+{#                                <th>客流雷达批次</th>#}
+                                <th>未离店留档批次</th>
+                                <th>未离店留档批次占比（基数为总客流）</th>
+                                <th>资料待更新批次</th>
+                                <th>订单录入数量</th>
+                                <th>订单无交车日期批次</th>
+                                <th>订单超过交车日期批次</th>
+                                <th>手机导入潜客批次</th>
+                                <th>回访客户批次</th>
+                                <th>创建预约批次</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for data in stats %}
+                            <tr>
+{#                                {% if data[2]['rx_count'] == 0 %}#}
+{#                                    <tr class="danger">#}
+{#                                {% elif data[2]['rx_count'] > data[2]['radar_count'] %}#}
+{#                                    <tr class="warning">#}
+{#                                {% else %}#}
+{#                                    <tr>#}
+{#                                {% endif %}#}
+                            <td>{{ data[1] }}</td>
+                            <td>{{ data[2]['online_days'] }}</td>
+                            <td>{{ data[2]['rx_count'] }}</td>
+{#                            <td>{{ data[2]['radar_count'] }}</td>#}
+                            <td>{{ data[2]['incomplete_rx_count'] }}</td>
+                            <td>{{ data[2]['incomplete_rx_percent'] }}</td>
+                            <td>{{ data[2]['rx_customer_count_in_draft'] }}</td>
+                            <td>{{ data[2]['new_orders_count'] }}</td>
+                            <td>{{ data[2]['no_deliver_date_orders_count'] }}</td>
+                            <td>{{ data[2]['overdue_orders_count'] }}</td>
+                            <td>{{ data[2]['imported_customer_count'] }}</td>
+                            <td>{{ data[2]['new_calls_count'] }}</td>
+                            <td>{{ data[2]['new_appt_count'] }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/bootstrap-datepicker.js"></script>
+    <script src="{{ assets('js/charts.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#r_search').click(function (event) {
+                var searchForm = $('#search-form');
+                searchForm.attr('action', '{{ url_for('ops.overview') }}');
+                searchForm.submit();
+            });
+            $('#export_excel').click(function (event) {
+                var searchForm = $('#search-form');
+                searchForm.attr('action', '{{ url_for('ops.download_overview') }}');
+                searchForm.submit();
+            });
+        });
+    </script>
+{% endblock %}
