@@ -12,7 +12,7 @@ redis==2.10.5
 python-dateutil==2.4.2
 phonenumbers==7.2.8
 permission==0.4.1
-openpyxl==2.3.2
+openpyxl==2.4.2
 gunicorn==19.4.1
 jsonschema==2.5.1
 blinker==1.4
